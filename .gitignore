@@ -5,3 +5,4 @@ llava/cuda-repo-ubuntu2204-11-8-local_11.8.0-520.61.05-1_amd64.deb
 llava/cuda-ubuntu2204.pin
 llava/cuda-ubuntu2204.pin.1
 llava/images.zip
+llava/wandb
