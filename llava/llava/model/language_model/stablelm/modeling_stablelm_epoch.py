@@ -683,5 +683,5 @@ class StableLMEpochForCausalLM(StableLMEpochPreTrainedModel):
         return reordered_past
 
 
-StableLMEpochConfig.register_for_auto_class()
-StableLMEpochForCausalLM.register_for_auto_class("AutoModelForCausalLM")
+# StableLMEpochConfig.register_for_auto_class()
+# StableLMEpochForCausalLM.register_for_auto_class("AutoModelForCausalLM")

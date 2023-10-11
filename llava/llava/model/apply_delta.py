@@ -9,16 +9,24 @@ from tqdm import tqdm
 from transformers import AutoTokenizer, AutoModelForCausalLM
 from llava import LlavaLlamaForCausalLM
 from llava import LlavaMistralForCausalLM
+from llava import LlavaStableLMEpochForCausalLM
 
 
 def apply_delta(base_model_path, target_model_path, delta_path):
     print("Loading base model")
     base = AutoModelForCausalLM.from_pretrained(
-        base_model_path, torch_dtype=torch.float16, low_cpu_mem_usage=True)
+        base_model_path, torch_dtype=torch.bfloat16, low_cpu_mem_usage=True)
 
     print("Loading delta")
-    delta = LlavaMistralForCausalLM.from_pretrained(delta_path, torch_dtype=torch.float16, low_cpu_mem_usage=True)
-    delta_tokenizer = AutoTokenizer.from_pretrained(delta_path)
+    if 'mistal' in base_model_path.lower():
+        delta = LlavaMistralForCausalLM.from_pretrained(delta_path, torch_dtype=torch.bfloat16, low_cpu_mem_usage=True)
+        delta_tokenizer = AutoTokenizer.from_pretrained(delta_path)
+    elif 'stablelm' in base_model_path.lower():
+        delta = LlavaMistralForCausalLM.from_pretrained(delta_path, torch_dtype=torch.bfloat16)
+        delta_tokenizer = AutoTokenizer.from_pretrained(delta_path)
+    else:
+        delta = LlavaLlamaForCausalLM.from_pretrained(delta_path, torch_dtype=torch.bfloat16, low_cpu_mem_usage=True)
+        delta_tokenizer = AutoTokenizer.from_pretrained(delta_path)
 
     print("Applying delta")
     for name, param in tqdm(delta.state_dict().items(), desc="Applying delta"):

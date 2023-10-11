@@ -794,6 +794,12 @@ def train():
                 cache_dir=training_args.cache_dir,
                 **bnb_model_from_pretrained_args
             )
+        elif 'stablelm' in model_args.model_name_or_path:
+            model = LlavaStableLMEpochForCausalLM.from_pretrained(
+                model_args.model_name_or_path,
+                cache_dir=training_args.cache_dir,
+                **bnb_model_from_pretrained_args
+            )
         else:
             model = LlavaLlamaForCausalLM.from_pretrained(
                 model_args.model_name_or_path,
@@ -855,7 +861,7 @@ def train():
             cache_dir=training_args.cache_dir,
             model_max_length=training_args.model_max_length,
             padding_side="right",
-            use_fast=False,
+            use_fast=True,
         )
 
     if model_args.version == "v0":
