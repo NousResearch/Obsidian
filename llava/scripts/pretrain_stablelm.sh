@@ -20,7 +20,7 @@ deepspeed llava/train/train_mem.py \
     --deepspeed ./scripts/zero2.json \
     --model_name_or_path $MODEL_VERSION \
     --version $PROMPT_VERSION \
-    --data_path pretrain_./chat.json \
+    --data_path ./chat.json \
     --image_folder ./train_images \
     --vision_tower openai/clip-vit-large-patch14-336 \
     --tune_mm_mlp_adapter True \

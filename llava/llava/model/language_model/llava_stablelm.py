@@ -25,22 +25,22 @@ from transformers.modeling_outputs import CausalLMOutputWithPast
 from .stablelm.modeling_stablelm_epoch import StableLMEpochConfig, StableLMEpochForCausalLM, StableLMEpochModel
 from ..llava_arch import LlavaMetaModel, LlavaMetaForCausalLM
 
-class LlavaStableLMEpochConfig(StableLMEpochConfig):
+class LlavaConfig(StableLMEpochConfig):
     model_type = "llava_stablelm_epoch"
 
 
 class LlavaStableLMEpochModel(LlavaMetaModel, StableLMEpochModel):
-    config_class = LlavaStableLMEpochConfig
+    config_class = LlavaConfig
 
-    def __init__(self, config: LlavaStableLMEpochConfig):
+    def __init__(self, config: LlavaConfig):
         super(LlavaStableLMEpochModel, self).__init__(config)
 
 class LlavaStableLMEpochForCausalLM(StableLMEpochForCausalLM, LlavaMetaForCausalLM):
-    config_class = LlavaStableLMEpochConfig
+    config_class = LlavaConfig
 
     def __init__(self, config):
         super(StableLMEpochForCausalLM, self).__init__(config)
-        self.model = StableLMEpochModel(config)
+        self.model = LlavaStableLMEpochModel(config)
 
         self.lm_head = nn.Linear(config.hidden_size, config.vocab_size, bias=False)
 
@@ -133,5 +133,5 @@ class LlavaStableLMEpochForCausalLM(StableLMEpochForCausalLM, LlavaMetaForCausal
         )
         return model_inputs
 
-AutoConfig.register("llava_stablelm_epoch", LlavaStableLMEpochConfig)
-AutoModelForCausalLM.register(LlavaStableLMEpochConfig, LlavaStableLMEpochForCausalLM)
+AutoConfig.register("llava_stablelm_epoch", LlavaConfig)
+AutoModelForCausalLM.register(LlavaConfig, LlavaStableLMEpochForCausalLM)

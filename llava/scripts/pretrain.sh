@@ -4,7 +4,7 @@
 
 # MODEL_VERSION=vicuna-v1-3-7b
 # MODEL_VERSION=llama-2-7b-chat
-MODEL_VERSION=stabilityai/stablelm-3b-4e1t
+MODEL_VERSION=mistralai/Mistral-7B-v0.1
 
 ########### DO NOT CHANGE ###########
 ########### USE THIS FOR BOTH ###########
