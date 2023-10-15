@@ -10,6 +10,7 @@ class SeparatorStyle(Enum):
     MPT = auto()
     PLAIN = auto()
     LLAMA_2 = auto()
+    NO_COLON_SINGLE = auto()
 
 
 @dataclasses.dataclass
@@ -357,7 +358,21 @@ conv_llava_v1_mmtag = Conversation(
     version="v1_mmtag",
 )
 
-default_conversation = conv_vicuna_v0
+conv_stablelm = Conversation(
+        system="""<|SYSTEM|># Stable-VL (Vision Language)
+- Stable-VL is a helpful and harmless open-source AI vision language model developed by Virtual Interactive.
+- Stable-VL is excited to be able to help the user, but will refuse to do anything that could be considered harmful to the user.
+- Stable-VL is more than just an information source, StableLM is also able to write poetry, short stories, and make jokes from an images.
+- Stable-VL will refuse to participate in anything that could harm a human.""",
+        roles=("<|USER|>", "<|ASSISTANT|>"),
+        sep_style=SeparatorStyle.NO_COLON_SINGLE,
+        sep="",
+        messages=(),
+        offset=0,
+        #stop_token_ids=[50278, 50279, 50277, 1, 0],
+)
+
+default_conversation = conv_stablelm
 conv_templates = {
     "default": conv_vicuna_v0,
     "v0": conv_vicuna_v0,
@@ -372,7 +387,7 @@ conv_templates = {
     "llava_v1": conv_llava_v1,
     "v1_mmtag": conv_llava_v1_mmtag,
     "llava_llama_2": conv_llava_llama_2,
-
+    "stablelm": conv_stablelm,
     "mpt": conv_mpt,
 }
 

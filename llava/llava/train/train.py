@@ -630,6 +630,13 @@ class LazySupervisedDataset(Dataset):
         super(LazySupervisedDataset, self).__init__()
         list_data_dict = json.load(open(data_path, "r"))
 
+        # list_data_dict = []
+
+        # with open(data_path, "r") as file:
+        #     for line in file:
+        #         # Parse each line (JSON object) and append it to list_data_dict
+        #         list_data_dict.append(json.loads(line))
+
         rank0_print("Formatting inputs...Skip in lazy mode")
         self.tokenizer = tokenizer
         self.list_data_dict = list_data_dict
@@ -664,7 +671,12 @@ class LazySupervisedDataset(Dataset):
             image_file = self.list_data_dict[i]['image']
             image_folder = self.data_args.image_folder
             processor = self.data_args.image_processor
-            image = Image.open(os.path.join(image_folder, image_file)).convert('RGB')
+            try:
+                image = Image.open(os.path.join(image_folder, image_file)).convert('RGB')
+            except Exception as e:
+                print(f"An error occurred: {e}")
+                image = Image.new('RGB', (512, 512), (0, 0, 0))
+
             if self.data_args.image_aspect_ratio == 'pad':
                 def expand2square(pil_img, background_color):
                     width, height = pil_img.size
@@ -792,9 +804,9 @@ def train():
             model = LlavaMistralForCausalLM.from_pretrained(
                 model_args.model_name_or_path,
                 cache_dir=training_args.cache_dir,
-                **bnb_model_from_pretrained_args
+                **z
             )
-        elif 'stablelm' in model_args.model_name_or_path:
+        elif 'stablelm' in model_args.model_name_or_path.lower():
             model = LlavaStableLMEpochForCausalLM.from_pretrained(
                 model_args.model_name_or_path,
                 cache_dir=training_args.cache_dir,
@@ -875,6 +887,12 @@ def train():
         tokenizer.pad_token = tokenizer.unk_token
     else:
         tokenizer.pad_token = tokenizer.unk_token
+        # if tokenizer.pad_token is None:
+        #     smart_tokenizer_and_embedding_resize(
+        #         special_tokens_dict=dict(pad_token="[PAD]"),
+        #         tokenizer=tokenizer,
+        #         model=model,
+        #     )
         if model_args.version in conversation_lib.conv_templates:
             conversation_lib.default_conversation = conversation_lib.conv_templates[model_args.version]
         else:
