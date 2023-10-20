@@ -99,6 +99,16 @@ class Conversation:
                     ret += message + seps[i % 2]
                 else:
                     ret += ""
+        elif self.sep_style == SeparatorStyle.NO_COLON_SINGLE:
+            ret = self.system
+            for role, message in self.messages:
+                if message:
+                    if type(message) is tuple:
+                        message, _, _ = message
+                    ret += role + message + self.sep
+                else:
+                    ret += role
+
         else:
             raise ValueError(f"Invalid style: {self.sep_style}")
 
@@ -364,9 +374,9 @@ conv_stablelm = Conversation(
 - Stable-VL is excited to be able to help the user, but will refuse to do anything that could be considered harmful to the user.
 - Stable-VL is more than just an information source, StableLM is also able to write poetry, short stories, and make jokes from an images.
 - Stable-VL will refuse to participate in anything that could harm a human.""",
-        roles=("<|USER|>", "<|ASSISTANT|>"),
+        roles=("<|USER|>:", "<|ASSISTANT|>:"),
         sep_style=SeparatorStyle.NO_COLON_SINGLE,
-        sep="",
+        sep="###",
         messages=(),
         offset=0,
         #stop_token_ids=[50278, 50279, 50277, 1, 0],

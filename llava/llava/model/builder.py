@@ -90,30 +90,34 @@ def load_pretrained_model(model_path, model_base, model_name, load_8bit=False, l
                 tokenizer = AutoTokenizer.from_pretrained(model_base, use_fast=False)
                 cfg_pretrained = AutoConfig.from_pretrained(model_path)
                 model = LlavaMistralForCausalLM.from_pretrained(model_base, low_cpu_mem_usage=True, config=cfg_pretrained, **kwargs)
-            elif 'stablelm' in model_name.lower():
+            elif 'stable' in model_name.lower():
                 if not os.path.isfile(os.path.join(model_path, 'configuration_stablelm_epoch.py')):
                     shutil.copyfile(os.path.join(model_base, 'configuration_stablelm_epoch.py'), os.path.join(model_path, 'configuration_stablelm_epoch.py'))
-                tokenizer = AutoTokenizer.from_pretrained(model_base)
+                tokenizer = AutoTokenizer.from_pretrained(model_path)
                 cfg_pretrained = AutoConfig.from_pretrained(model_path, trust_remote_code=True)
                 model = LlavaStableLMEpochForCausalLM.from_pretrained(model_base, config=cfg_pretrained, **kwargs)
                 
-
-            mm_projector_weights = torch.load(os.path.join(model_path, 'mm_projector.bin'), map_location='cpu')
-            mm_projector_weights = {k: v.to(torch.float16) for k, v in mm_projector_weights.items()}
-            model.load_state_dict(mm_projector_weights, strict=False)
+            # print('loading mm')
+            # mm_projector_weights = torch.load(os.path.join(model_path, 'mm_projector.bin'), map_location='cpu')
+            # mm_projector_weights = {k: v.to(torch.float16) for k, v in mm_projector_weights.items()}
+            # model.load_state_dict(mm_projector_weights, strict=False)
         else:
             if 'mpt' in model_name.lower():
                 tokenizer = AutoTokenizer.from_pretrained(model_path, use_fast=True)
                 model = LlavaMPTForCausalLM.from_pretrained(model_path, low_cpu_mem_usage=True, **kwargs)
-            elif 'stablelm' in model_name.lower():
+            elif 'stable' in model_name.lower():
                 tokenizer = AutoTokenizer.from_pretrained(model_path)
-                model = LlavaStableLMEpochForCausalLM.from_pretrained(model_base, config=cfg_pretrained, **kwargs)
+                model = LlavaStableLMEpochForCausalLM.from_pretrained(model_path, config=cfg_pretrained, **kwargs)
+                print('loading mm')
+                mm_projector_weights = torch.load(os.path.join(model_path, 'mm_projector.bin'), map_location='cpu')
+                mm_projector_weights = {k: v.to(torch.float16) for k, v in mm_projector_weights.items()}
+                model.load_state_dict(mm_projector_weights, strict=False)
     else:
         # Load language model
         if model_base is not None:
             # PEFT model
             from peft import PeftModel
-            tokenizer = AutoTokenizer.from_pretrained(model_base, use_fast=False)
+            tokenizer = AutoTokenizer.from_pretrained(model_base, use_fast=True)
             model = AutoModelForCausalLM.from_pretrained(model_base, torch_dtype=torch.float16, low_cpu_mem_usage=True, device_map="auto")
             print(f"Loading LoRA weights from {model_path}")
             model = PeftModel.from_pretrained(model, model_path)
@@ -126,13 +130,23 @@ def load_pretrained_model(model_path, model_base, model_name, load_8bit=False, l
             if 'mpt' in model_name.lower():
                 tokenizer = AutoTokenizer.from_pretrained(model_path, use_fast=True)
                 model = AutoModelForCausalLM.from_pretrained(model_path, low_cpu_mem_usage=True, trust_remote_code=True, **kwargs)
+            elif 'stable' in model_name.lower():
+                tokenizer = AutoTokenizer.from_pretrained(model_path)
+                tokenizer.pad_token = tokenizer.unk_token
+                cfg_pretrained = AutoConfig.from_pretrained(model_path)
+                model = LlavaStableLMEpochForCausalLM.from_pretrained(model_path, config=cfg_pretrained, **kwargs)
+                print('loading mm')
+                mm_projector_weights = torch.load(os.path.join(model_path, 'mm_projector.bin'), map_location='cpu')
+                mm_projector_weights = {k: v.to(torch.float16) for k, v in mm_projector_weights.items()}
+                model.load_state_dict(mm_projector_weights, strict=False)
+                print(model)
             else:
-                tokenizer = AutoTokenizer.from_pretrained(model_path, use_fast=False)
+                tokenizer = AutoTokenizer.from_pretrained(model_path, use_fast=True)
                 model = AutoModelForCausalLM.from_pretrained(model_path, low_cpu_mem_usage=True, **kwargs)
 
     image_processor = None
 
-    if 'llava' in model_name.lower():
+    if 'stable' in model_name.lower():
         mm_use_im_start_end = getattr(model.config, "mm_use_im_start_end", False)
         mm_use_im_patch_token = getattr(model.config, "mm_use_im_patch_token", True)
         if mm_use_im_patch_token:

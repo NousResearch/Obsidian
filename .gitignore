@@ -6,3 +6,8 @@ llava/cuda-ubuntu2204.pin
 llava/cuda-ubuntu2204.pin.1
 llava/images.zip
 llava/wandb
+*.log
+*.pyc
+2023-10-16-conv.json
+llava/pytorch_model.bin.index.json
+llava/test.py
