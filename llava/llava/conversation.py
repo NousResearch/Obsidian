@@ -382,7 +382,18 @@ conv_stablelm = Conversation(
         #stop_token_ids=[50278, 50279, 50277, 1, 0],
 )
 
-default_conversation = conv_stablelm
+conv_chatml = Conversation(
+        system="""<|im_start|>system
+A conversation between a user and an LLM-based AI assistant name StableCapybara. The assistant gives helpful and honest answers.""",
+        roles=("<|im_start|>user\n", "<|im_start|>assistant\n"),
+        sep_style=SeparatorStyle.TWO,
+        sep="<|im_end|>",
+        messages=(),
+        offset=0,
+        #stop_token_ids=[50278, 50279, 50277, 1, 0],
+)
+
+default_conversation = conv_chatml
 conv_templates = {
     "default": conv_vicuna_v0,
     "v0": conv_vicuna_v0,
@@ -399,6 +410,7 @@ conv_templates = {
     "llava_llama_2": conv_llava_llama_2,
     "stablelm": conv_stablelm,
     "mpt": conv_mpt,
+    "chatml": conv_chatml,
 }
 
 
