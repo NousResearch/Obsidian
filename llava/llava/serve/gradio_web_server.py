@@ -189,7 +189,7 @@ def http_bot(state, model_selector, temperature, top_p, max_new_tokens, request:
         elif "llama-2" in model_name:
             template_name = "llama_2"
         elif "stable" in model_name.lower():
-            template_name = "stablelm"
+            template_name = "chatml"
         else:
             template_name = "vicuna_v1"
         new_state = conv_templates[template_name].copy()
@@ -229,7 +229,7 @@ def http_bot(state, model_selector, temperature, top_p, max_new_tokens, request:
         "temperature": float(temperature),
         "top_p": float(top_p),
         "max_new_tokens": min(int(max_new_tokens), 1536),
-        "stop": state.sep if state.sep_style in [SeparatorStyle.SINGLE, SeparatorStyle.MPT, SeparatorStyle.NO_COLON_SINGLE] else state.sep2,
+        "stop": state.sep if state.sep_style in [SeparatorStyle.SINGLE, SeparatorStyle.MPT, SeparatorStyle.TWO] else state.sep2,
         "images": f'List of {len(state.get_images())} images: {all_image_hash}',
     }
     logger.info(f"==== request ====\n{pload}")
