@@ -109,9 +109,7 @@ def load_pretrained_model(model_path, model_base, model_name, load_8bit=False, l
                 tokenizer = AutoTokenizer.from_pretrained(model_path)
                 model = LlavaStableLMEpochForCausalLM.from_pretrained(model_path, config=cfg_pretrained, **kwargs)
                 print('loading mm')
-                # mm_projector_weights = torch.load(os.path.join(model_path, 'mm_projector.bin'), map_location='cpu')
-                local_model_path = '/home/qnguyen3/.cache/huggingface/hub/models--vilm--StableCapybara-VL/snapshots/9c4f69f3fc4d5d38f467d18724fa8ba6a0c18327'
-                mm_projector_weights = torch.load(os.path.join(local_model_path, 'mm_projector.bin'), map_location='cpu')
+                mm_projector_weights = torch.load(os.path.join('./', 'mm_projector.bin'), map_location='cpu')
                 mm_projector_weights = {k: v.to(torch.float16) for k, v in mm_projector_weights.items()}
                 model.load_state_dict(mm_projector_weights, strict=False)
     else:
@@ -138,8 +136,7 @@ def load_pretrained_model(model_path, model_base, model_name, load_8bit=False, l
                 cfg_pretrained = AutoConfig.from_pretrained(model_path)
                 model = LlavaStableLMEpochForCausalLM.from_pretrained(model_path, config=cfg_pretrained, **kwargs)
                 print('loading mm')
-                local_model_path = '/home/qnguyen3/.cache/huggingface/hub/models--vilm--StableCapybara-VL/snapshots/9c4f69f3fc4d5d38f467d18724fa8ba6a0c18327'
-                mm_projector_weights = torch.load(os.path.join(local_model_path, 'mm_projector.bin'), map_location='cpu')
+                mm_projector_weights = torch.load(os.path.join('./', 'mm_projector.bin'), map_location='cpu')
                 # mm_projector_weights = torch.load(os.path.join(model_path, 'mm_projector.bin'), map_location='cpu')
                 mm_projector_weights = {k: v.to(torch.float16) for k, v in mm_projector_weights.items()}
                 model.load_state_dict(mm_projector_weights, strict=False)

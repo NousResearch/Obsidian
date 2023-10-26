@@ -8,3 +8,5 @@ wandb
 2023-10-16-conv.json
 pytorch_model.bin.index.json
 test.py
+mm_projector.bin
+2023-10-26-conv.json
