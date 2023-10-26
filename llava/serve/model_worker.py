@@ -64,7 +64,7 @@ class ModelWorker:
         self.tokenizer, self.model, self.image_processor, self.context_len = load_pretrained_model(
             model_path, model_base, self.model_name, load_8bit, load_4bit)
         # self.is_multimodal = 'llava' in self.model_name.lower()
-        self.is_multimodal = 'stable' in self.model_name.lower()
+        self.is_multimodal = True
 
         if not no_register:
             self.register_to_controller()
