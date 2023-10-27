@@ -281,12 +281,13 @@ def http_bot(state, model_selector, temperature, top_p, max_new_tokens, request:
         fout.write(json.dumps(data) + "\n")
 
 title_markdown = ("""
-# 🌋 Obsidian: 5B Vision-Language Model For Everyone
-[[Code]](https://github.com/NousResearch/Obsidian) [[Model]](https://huggingface.co/vilm/StableCapybara-VL)
+# 🔥 Obsidian: 5B Vision-Language Model For Everyone
+[[Code]](https://github.com/NousResearch/Obsidian) [[Model]](https://huggingface.co/NousResearch/Obsidian-3B-V0.5)
 """)
 
 tos_markdown = ("""
 ### Terms of use
+Feel free to use, copy, modify, and distribute this software under the terms of the Apache 2.0 License.
 By using this service, users are required to agree to the following terms:
 The model might output wrong answers.
 Please click the "Flag" button if you get any inappropriate answer! We will collect those to keep improving our moderator.
@@ -295,8 +296,8 @@ For an optimal experience, please use desktop computers for this demo, as mobile
 
 
 learn_more_markdown = ("""
-### License
-Feel free to use, copy, modify, and distribute this software under the terms of the Apache 2.0 License.
+### Acknowledgements
+This is a joined work between Nous Research and Virtual Interactive.
 """)
 
 block_css = """

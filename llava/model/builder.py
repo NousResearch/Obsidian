@@ -90,7 +90,7 @@ def load_pretrained_model(model_path, model_base, model_name, load_8bit=False, l
                 tokenizer = AutoTokenizer.from_pretrained(model_base, use_fast=False)
                 cfg_pretrained = AutoConfig.from_pretrained(model_path)
                 model = LlavaMistralForCausalLM.from_pretrained(model_base, low_cpu_mem_usage=True, config=cfg_pretrained, **kwargs)
-            elif 'stable' in model_name.lower():
+            elif 'stable' in model_name.lower() or 'obsidian' in model_name.lower():
                 if not os.path.isfile(os.path.join(model_path, 'configuration_stablelm_epoch.py')):
                     shutil.copyfile(os.path.join(model_base, 'configuration_stablelm_epoch.py'), os.path.join(model_path, 'configuration_stablelm_epoch.py'))
                 tokenizer = AutoTokenizer.from_pretrained(model_path)
@@ -105,7 +105,7 @@ def load_pretrained_model(model_path, model_base, model_name, load_8bit=False, l
             if 'mpt' in model_name.lower():
                 tokenizer = AutoTokenizer.from_pretrained(model_path, use_fast=True)
                 model = LlavaMPTForCausalLM.from_pretrained(model_path, low_cpu_mem_usage=True, **kwargs)
-            elif 'stable' in model_name.lower():
+            elif 'stable' in model_name.lower() or 'obsidian' in model_name.lower():
                 tokenizer = AutoTokenizer.from_pretrained(model_path)
                 model = LlavaStableLMEpochForCausalLM.from_pretrained(model_path, config=cfg_pretrained, **kwargs)
                 print('loading mm')
@@ -130,7 +130,7 @@ def load_pretrained_model(model_path, model_base, model_name, load_8bit=False, l
             if 'mpt' in model_name.lower():
                 tokenizer = AutoTokenizer.from_pretrained(model_path, use_fast=True)
                 model = AutoModelForCausalLM.from_pretrained(model_path, low_cpu_mem_usage=True, trust_remote_code=True, **kwargs)
-            elif 'stable' in model_name.lower():
+            elif 'stable' in model_name.lower() or 'obsidian' in model_name.lower():
                 tokenizer = AutoTokenizer.from_pretrained(model_path)
                 tokenizer.pad_token = tokenizer.unk_token
                 cfg_pretrained = AutoConfig.from_pretrained(model_path)
@@ -147,7 +147,7 @@ def load_pretrained_model(model_path, model_base, model_name, load_8bit=False, l
 
     image_processor = None
 
-    if 'stable' in model_name.lower():
+    if 'stable' in model_name.lower() or 'obsidian' in model_name.lower():
         mm_use_im_start_end = getattr(model.config, "mm_use_im_start_end", False)
         mm_use_im_patch_token = getattr(model.config, "mm_use_im_patch_token", True)
         if mm_use_im_patch_token:
