@@ -4,17 +4,19 @@
 </p>
 
 ## Usage
-1. Download the multimodal projector from Huggingface
-```bash
-sh script/download_mm_projector.sh
-```
-2. Install Obsidian
+1. Install Obsidian
 
 - Clone this project and navigate to the Obsidian folder
 
 ```bash
 git clone https://github.com/NousResearch/Obsidian.git
 cd Obsidian
+```
+
+- Download the multimodal projector from Huggingface
+
+```bash
+sh script/download_mm_projector.sh
 ```
 
 - Install packages
@@ -39,7 +41,7 @@ pip install flash-attn --no-build-isolation
 pip install --upgrade transformers
 ```
 
-3. Run the Demo UI
+2. Run the Demo UI
 
 #### Launch a controller
 ```Shell
