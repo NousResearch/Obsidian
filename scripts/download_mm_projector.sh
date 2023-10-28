@@ -1,0 +1,1 @@
+wget https://huggingface.co/vilm/StableCapybara-VL/resolve/main/mm_projector.bin
