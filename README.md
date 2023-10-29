@@ -3,6 +3,8 @@
   <img src="images/obsidian.png" width="50%"> <br>
 </p>
 
+<p align="center">Obsidian is a joint work between Nous Research and Virtual Interactive. Special thanks to **LDJ** and **qnguyen3** for making this work possible.</p>
+
 Easiest way to try out: [Colab](https://colab.research.google.com/drive/1C1FkoeZYBv3dZELaKgxahoZzWPfz0En8?usp=sharing) - After open the Gradio, give the model about 2 minutes to load then refresh the Gradio.
 ## Usage
 1. Install Obsidian
