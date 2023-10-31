@@ -19,7 +19,7 @@ cd Obsidian
 - Download the multimodal projector from Huggingface
 
 ```bash
-sh script/download_mm_projector.sh
+sh scripts/download_mm_projector.sh
 ```
 
 - Install packages
