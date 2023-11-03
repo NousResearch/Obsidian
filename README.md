@@ -41,7 +41,7 @@ pip install flash-attn --no-build-isolation
 - Install the latest version of `transformers`
 
 ```bash
-pip install --upgrade transformers
+pip install --upgrade transformers==4.34.0
 ```
 
 2. Run the Demo UI
