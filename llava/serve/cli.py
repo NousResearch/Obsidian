@@ -37,6 +37,8 @@ def main(args):
         conv_mode = "llava_v1"
     elif "mpt" in model_name.lower():
         conv_mode = "mpt"
+    elif "obsidian" in model_name.lower():
+        conv_mode = "chatml"
     else:
         conv_mode = "llava_v0"
 
@@ -105,7 +107,7 @@ def main(args):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--model-path", type=str, default="facebook/opt-350m")
+    parser.add_argument("--model-path", type=str, default="NousResearch/Obsidian-3B-V0.5")
     parser.add_argument("--model-base", type=str, default=None)
     parser.add_argument("--image-file", type=str, required=True)
     parser.add_argument("--num-gpus", type=int, default=1)
