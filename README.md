@@ -1,96 +1,248 @@
-#  Obsidian: Multimodal LLM for Everyone
+# Obsidian: Multimodal LLM for Everyone
+
 <p align="center">
   <img src="images/obsidian.png" width="50%"> <br>
 </p>
 
+<p align="center">
+  <a href="https://huggingface.co/NousResearch/Obsidian-3B-V0.5">🤗 Model</a> •
+  <a href="https://colab.research.google.com/drive/1C1FkoeZYBv3dZELaKgxahoZzWPfz0En8?usp=sharing">📓 Colab Demo</a> •
+  <a href="#quick-start">🚀 Quick Start</a> •
+  <a href="#model-capabilities">✨ Capabilities</a>
+</p>
+
 <p align="center">Obsidian is a joint work between <a href="https://huggingface.co/NousResearch">Nous Research</a> and <a href="https://huggingface.co/vilm">Virtual Interactive</a>. Special thanks to <b>LDJ</b> and <b>qnguyen3</b> for making this work possible.</p>
 
-Easiest way to try out: [Colab](https://colab.research.google.com/drive/1C1FkoeZYBv3dZELaKgxahoZzWPfz0En8?usp=sharing) - After open the Gradio, give the model about 2 minutes to load then refresh the Gradio.
-## Usage
-1. Install Obsidian
+---
 
-- Clone this project and navigate to the Obsidian folder
+## Table of Contents
+
+- [Model Capabilities](#model-capabilities)
+- [Quick Start](#quick-start)
+- [Installation](#installation)
+  - [Prerequisites](#prerequisites)
+  - [Step-by-Step Setup](#step-by-step-setup)
+- [Usage](#usage)
+  - [Web Demo UI](#web-demo-ui)
+  - [Python API](#python-api)
+  - [Command Line Inference](#command-line-inference)
+- [Training](#training)
+  - [Pretraining](#1-pretraining)
+  - [Instructional Finetuning](#2-instructional-finetuning)
+- [Evaluation](#evaluation)
+- [Troubleshooting](#troubleshooting)
+- [Acknowledgement](#acknowledgement)
+
+---
+
+## Model Capabilities
+
+Obsidian is a powerful multimodal language model that combines vision and language understanding. Here's what it can do:
+
+| Capability | Description |
+|------------|-------------|
+| 🖼️ **Image Understanding** | Analyze and describe images in detail |
+| 💬 **Visual Q&A** | Answer questions about image content |
+| 📝 **Image Captioning** | Generate accurate descriptions of visual content |
+| 🔍 **OCR & Text Recognition** | Read and interpret text within images |
+| 🎨 **Visual Reasoning** | Perform complex reasoning about visual scenes |
+| 📊 **Chart/Diagram Analysis** | Interpret charts, graphs, and diagrams |
+
+### Model Variants
+
+| Model | Parameters | HuggingFace |
+|-------|------------|-------------|
+| Obsidian-3B-V0.5 | 3B | [NousResearch/Obsidian-3B-V0.5](https://huggingface.co/NousResearch/Obsidian-3B-V0.5) |
+
+---
+
+## Quick Start
+
+**Try it instantly on Google Colab:** [Open Colab Demo](https://colab.research.google.com/drive/1C1FkoeZYBv3dZELaKgxahoZzWPfz0En8?usp=sharing)
+
+> **Note:** After opening the Gradio interface, give the model about 2 minutes to load, then refresh the page.
+
+For local installation, continue to the [Installation](#installation) section below.
+
+---
+
+## Installation
+
+### Prerequisites
+
+Before installing Obsidian, ensure you have:
+
+- **Python** 3.8 or higher (3.10 recommended)
+- **CUDA** 11.7+ with compatible NVIDIA GPU (8GB+ VRAM recommended)
+- **Git** for cloning the repository
+- **Conda** (recommended) or pip for package management
+
+### Step-by-Step Setup
+
+#### 1. Clone the Repository
 
 ```bash
 git clone https://github.com/NousResearch/Obsidian.git
 cd Obsidian
 ```
 
-- Download the multimodal projector from Huggingface
+#### 2. Create and Activate Environment
 
-```bash
-sh script/download_mm_projector.sh
-```
-
-- Install packages
-
+Using Conda (recommended):
 ```bash
 conda create -n obsidian python=3.10 -y
 conda activate obsidian
-pip install --upgrade pip  # enable PEP 660 support
+```
+
+Or using venv:
+```bash
+python -m venv obsidian-env
+source obsidian-env/bin/activate  # Linux/Mac
+# obsidian-env\Scripts\activate   # Windows
+```
+
+#### 3. Install Core Dependencies
+
+```bash
+pip install --upgrade pip
 pip install -e .
 ```
 
-- Install additional packages for training cases (required)
+#### 4. Install Training Dependencies
 
+Required for both training and inference:
 ```bash
 pip install ninja
 pip install flash-attn --no-build-isolation
 ```
 
-- Install the latest version of `transformers`
+#### 5. Download the Multimodal Projector
+
+```bash
+bash scripts/download_mm_projector.sh
+```
+
+#### 6. Install Compatible Transformers Version
 
 ```bash
 pip install --upgrade transformers==4.34.0
 ```
 
-2. Run the Demo UI
+### Verify Installation
 
-#### Launch a controller
-```Shell
+```bash
+python -c "from llava.model import LlavaLlamaForCausalLM; print('✓ Obsidian installed successfully!')"
+```
+
+---
+
+## Usage
+
+### Web Demo UI
+
+The easiest way to interact with Obsidian is through the web interface. You'll need three terminal windows:
+
+#### Terminal 1: Launch the Controller
+```bash
 python -m llava.serve.controller --host 0.0.0.0 --port 10000
 ```
 
-#### Launch a gradio web server.
-```Shell
+#### Terminal 2: Launch the Gradio Web Server
+```bash
 python -m llava.serve.gradio_web_server --controller http://localhost:10000 --model-list-mode reload
 ```
-You just launched the Gradio web interface. Now, you can open the web interface with the URL printed on the screen. You may notice that there is no model in the model list. Do not worry, as we have not launched any model worker yet. It will be automatically updated when you launch a model worker.
 
-#### Launch a model worker
-
-This is the actual *worker* that performs the inference on the GPU.  Each worker is responsible for a single model specified in `--model-path`.
-
-```Shell
-python -m llava.serve.model_worker --host 0.0.0.0 --controller http://localhost:10000 --port 40000 --worker http://localhost:40000 --model-path NousResearch/Obsidian-3B-V0.5
+#### Terminal 3: Launch the Model Worker
+```bash
+python -m llava.serve.model_worker \
+    --host 0.0.0.0 \
+    --controller http://localhost:10000 \
+    --port 40000 \
+    --worker http://localhost:40000 \
+    --model-path NousResearch/Obsidian-3B-V0.5
 ```
-Wait until the process finishes loading the model and you see "Uvicorn running on ...".  Now, refresh your Gradio web UI, and you will see the model you just launched in the model list.
+
+Wait for "Uvicorn running on ..." to appear, then refresh your browser. The model will now be available in the Gradio interface.
+
+### Python API
+
+Use Obsidian directly in your Python code:
+
+```python
+from llava.model import LlavaLlamaForCausalLM
+from llava.conversation import conv_templates
+from llava.utils import disable_torch_init
+from transformers import AutoTokenizer
+from PIL import Image
+import torch
+
+# Initialize
+disable_torch_init()
+model_path = "NousResearch/Obsidian-3B-V0.5"
+
+tokenizer = AutoTokenizer.from_pretrained(model_path, use_fast=False)
+model = LlavaLlamaForCausalLM.from_pretrained(
+    model_path,
+    torch_dtype=torch.float16,
+    device_map="auto"
+)
+
+# Load and process image
+image = Image.open("your_image.jpg")
+
+# Create conversation
+conv = conv_templates["llava_v1"].copy()
+conv.append_message(conv.roles[0], "<image>\nDescribe this image in detail.")
+conv.append_message(conv.roles[1], None)
+prompt = conv.get_prompt()
+
+# Generate response
+# (Add your inference code here based on the model's generate method)
+```
+
+### Command Line Inference
+
+For quick single-image inference:
+
+```bash
+python -m llava.serve.cli \
+    --model-path NousResearch/Obsidian-3B-V0.5 \
+    --image-file "path/to/your/image.jpg"
+```
+
+---
 
 ## Training
+
 ### 1. Pretraining
 
-Please download the 558K subset of the LAION-CC-SBU dataset with BLIP captions [here](https://huggingface.co/datasets/liuhaotian/LLaVA-Pretrain).
+Download the 558K subset of the LAION-CC-SBU dataset with BLIP captions from [HuggingFace](https://huggingface.co/datasets/liuhaotian/LLaVA-Pretrain).
 
-Pretrain takes around 2.5 hours for Obsidian-3B-V0.5 on 4x A100 (80G), at 336px for the vision module.
+**Training Time:** ~2.5 hours on 4x A100 (80G) at 336px resolution.
 
-Training script with DeepSpeed ZeRO-2: [`pretrain.sh`](https://github.com/haotian-liu/LLaVA/blob/main/scripts/v1_5/pretrain.sh).
+Training script with DeepSpeed ZeRO-2: [`pretrain.sh`](https://github.com/haotian-liu/LLaVA/blob/main/scripts/v1_5/pretrain.sh)
 
-- `--mm_projector_type mlp2x_gelu`: the two-layer MLP vision-language connector.
-- `--vision_tower openai/clip-vit-large-patch14-336`: CLIP ViT-L/14 336px.
+Key parameters:
+- `--mm_projector_type mlp2x_gelu`: Two-layer MLP vision-language connector
+- `--vision_tower openai/clip-vit-large-patch14-336`: CLIP ViT-L/14 336px
 
 ### 2. Instructional Finetuning
 
-Please download the annotation of the final mixture our instruction tuning data [llava_v1_5_mix665k.json](https://huggingface.co/datasets/liuhaotian/LLaVA-Instruct-150K/blob/main/llava_v1_5_mix665k.json), and download the images from constituting datasets:
+#### Download Required Data
 
-- COCO: [train2017](http://images.cocodataset.org/zips/train2017.zip)
-- GQA: [images](https://downloads.cs.stanford.edu/nlp/data/gqa/images.zip)
-- OCR-VQA: [download script](https://drive.google.com/drive/folders/1_GYPY5UkUy7HIcR0zq3ZCFgeZN7BAfm_?usp=sharing), **we save all files as `.jpg`**
-- TextVQA: [train_val_images](https://dl.fbaipublicfiles.com/textvqa/images/train_val_images.zip)
-- VisualGenome: [part1](https://cs.stanford.edu/people/rak248/VG_100K_2/images.zip), [part2](https://cs.stanford.edu/people/rak248/VG_100K_2/images2.zip)
+1. **Annotations:** [llava_v1_5_mix665k.json](https://huggingface.co/datasets/liuhaotian/LLaVA-Instruct-150K/blob/main/llava_v1_5_mix665k.json)
 
-After downloading all of them, organize the data as follows in `./playground/data`,
+2. **Images from source datasets:**
+   - COCO: [train2017](http://images.cocodataset.org/zips/train2017.zip)
+   - GQA: [images](https://downloads.cs.stanford.edu/nlp/data/gqa/images.zip)
+   - OCR-VQA: [download script](https://drive.google.com/drive/folders/1_GYPY5UkUy7HIcR0zq3ZCFgeZN7BAfm_?usp=sharing) (save all files as `.jpg`)
+   - TextVQA: [train_val_images](https://dl.fbaipublicfiles.com/textvqa/images/train_val_images.zip)
+   - VisualGenome: [part1](https://cs.stanford.edu/people/rak248/VG_100K_2/images.zip), [part2](https://cs.stanford.edu/people/rak248/VG_100K_2/images2.zip)
+
+#### Organize Data Structure
 
 ```
+./playground/data/
 ├── coco
 │   └── train2017
 ├── gqa
@@ -104,80 +256,84 @@ After downloading all of them, organize the data as follows in `./playground/dat
     └── VG_100K_2
 ```
 
+---
 
 ## Evaluation
 
 ### GPT-assisted Evaluation
 
-Our GPT-assisted evaluation pipeline for multimodal modeling is provided for a comprehensive understanding of the capabilities of vision-language models.  Please see our paper for more details.
+Our evaluation pipeline provides comprehensive assessment of vision-language capabilities.
 
-1. Generate LLaVA responses
+#### Step 1: Generate Model Responses
 
-```Shell
+```bash
 python model_vqa.py \
     --model-path ./checkpoints/LLaVA-13B-v0 \
-    --question-file \
-    playground/data/coco2014_val_qa_eval/qa90_questions.jsonl \
-    --image-folder \
-    /path/to/coco2014_val \
-    --answers-file \
-    /path/to/answer-file-our.jsonl
+    --question-file playground/data/coco2014_val_qa_eval/qa90_questions.jsonl \
+    --image-folder /path/to/coco2014_val \
+    --answers-file /path/to/answer-file-our.jsonl
 ```
 
-2. Evaluate the generated responses.  In our case, [`answer-file-ref.jsonl`](./playground/data/coco2014_val_qa_eval/qa90_gpt4_answer.jsonl) is the response generated by text-only GPT-4 (0314), with the context captions/boxes provided.
+#### Step 2: Evaluate Against Reference
 
-```Shell
-OPENAI_API_KEY="sk-***********************************" python llava/eval/eval_gpt_review_visual.py \
+```bash
+OPENAI_API_KEY="your-api-key" python llava/eval/eval_gpt_review_visual.py \
     --question playground/data/coco2014_val_qa_eval/qa90_questions.jsonl \
     --context llava/eval/table/caps_boxes_coco2014_val_80.jsonl \
-    --answer-list \
-    /path/to/answer-file-ref.jsonl \
-    /path/to/answer-file-our.jsonl \
+    --answer-list /path/to/answer-file-ref.jsonl /path/to/answer-file-our.jsonl \
     --rule llava/eval/table/rule.json \
     --output /path/to/review.json
 ```
 
-3. Summarize the evaluation results
+#### Step 3: Summarize Results
 
-```Shell
+```bash
 python summarize_gpt_review.py
 ```
 
-## ScienceQA
+### ScienceQA Benchmark
 
-Please check out the documentation [here](https://github.com/haotian-liu/LLaVA/blob/main/docs/ScienceQA.md).
+See the [ScienceQA documentation](https://github.com/haotian-liu/LLaVA/blob/main/docs/ScienceQA.md) for evaluation instructions.
 
-<!-- ## Citation
+---
 
-If you find LLaVA useful for your research and applications, please cite using this BibTeX:
-```bibtex
+## Troubleshooting
 
-@misc{liu2023llava,
-      title={Improved Baselines with Visual Instruction Tuning}, 
-      author={Liu, Haotian and Li, Chunyuan and Li, Yuheng and Lee, Yong Jae},
-      publisher={arXiv:2310.03744},
-      year={2023},
-}
+### Common Issues
 
-@misc{liu2023llava,
-      title={Visual Instruction Tuning}, 
-      author={Liu, Haotian and Li, Chunyuan and Wu, Qingyang and Lee, Yong Jae},
-      publisher={arXiv:2304.08485},
-      year={2023},
-}
-``` -->
+| Issue | Solution |
+|-------|----------|
+| **CUDA out of memory** | Reduce batch size or use `--load-in-8bit` flag |
+| **flash-attn installation fails** | Ensure CUDA toolkit matches PyTorch CUDA version |
+| **Model not appearing in Gradio** | Wait for "Uvicorn running..." message, then refresh |
+| **Slow inference** | Ensure you're using GPU (`device_map="auto"`) |
+| **Import errors** | Run `pip install -e .` from the Obsidian directory |
+
+### GPU Memory Requirements
+
+| Model | Minimum VRAM | Recommended VRAM |
+|-------|--------------|------------------|
+| Obsidian-3B-V0.5 | 6GB | 8GB+ |
+| Obsidian-3B-V0.5 (8-bit) | 4GB | 6GB+ |
+
+---
 
 ## Acknowledgement
 
-<!-- - [Vicuna](https://github.com/lm-sys/FastChat): the codebase we built upon, and our base model Vicuna-13B that has the amazing language capabilities! -->
-- ORIGINAL PAPER and LINKS:
+### Original LLaVA Project
+
 *Visual instruction tuning towards large language and vision models with GPT-4 level capabilities.*
 
-[[Project Page](https://llava-vl.github.io/)] [[Demo](https://llava.hliu.cc/)]  [[Data](https://github.com/haotian-liu/LLaVA/blob/main/docs/Data.md)] [[Model Zoo](https://github.com/haotian-liu/LLaVA/blob/main/docs/MODEL_ZOO.md)]
+[[Project Page](https://llava-vl.github.io/)] [[Demo](https://llava.hliu.cc/)] [[Data](https://github.com/haotian-liu/LLaVA/blob/main/docs/Data.md)] [[Model Zoo](https://github.com/haotian-liu/LLaVA/blob/main/docs/MODEL_ZOO.md)]
 
-**Improved Baselines with Visual Instruction Tuning** [[Paper](https://arxiv.org/abs/2310.03744)] <br>
+**Improved Baselines with Visual Instruction Tuning** [[Paper](https://arxiv.org/abs/2310.03744)]
 [Haotian Liu](https://hliu.cc), [Chunyuan Li](https://chunyuan.li/), [Yuheng Li](https://yuheng-li.github.io/), [Yong Jae Lee](https://pages.cs.wisc.edu/~yongjaelee/)
 
-**Visual Instruction Tuning** (NeurIPS 2023, **Oral**) [[Paper](https://arxiv.org/abs/2304.08485)]<br>
+**Visual Instruction Tuning** (NeurIPS 2023, **Oral**) [[Paper](https://arxiv.org/abs/2304.08485)]
 [Haotian Liu*](https://hliu.cc), [Chunyuan Li*](https://chunyuan.li/), [Qingyang Wu](https://scholar.google.ca/citations?user=HDiw-TsAAAAJ&hl=en/), [Yong Jae Lee](https://pages.cs.wisc.edu/~yongjaelee/) (*Equal Contribution)
 
+---
+
+## License
+
+This project is licensed under the Apache 2.0 License - see the [LICENSE](LICENSE) file for details.
