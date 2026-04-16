@@ -5,7 +5,7 @@
 
 <p align="center">Obsidian is a joint work between <a href="https://huggingface.co/NousResearch">Nous Research</a> and <a href="https://huggingface.co/vilm">Virtual Interactive</a>. Special thanks to <b>LDJ</b> and <b>qnguyen3</b> for making this work possible.</p>
 
-Easiest way to try out: [Colab](https://colab.research.google.com/drive/1C1FkoeZYBv3dZELaKgxahoZzWPfz0En8?usp=sharing) - After open the Gradio, give the model about 2 minutes to load then refresh the Gradio.
+Easiest way to try out: [Colab](https://colab.research.google.com/drive/1C1FkoeZYBv3dZELaKgxahoZzWPfz0En8?usp=sharing) - After opening the Gradio, give the model about 2 minutes to load then refresh the Gradio.
 ## Usage
 1. Install Obsidian
 
